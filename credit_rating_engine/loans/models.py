@@ -5,7 +5,7 @@ class Loans(models.Model):
     lending_address         = models.CharField(max_length=255)
     borrower_nin_hash       = models.CharField(max_length=255)
     pay_id                  = models.CharField(max_length=255)
-    loan_amount             = models.DecimalField(max_digits=2)
+    loan_amount             = models.DecimalField(max_digits=20, decimal_places=2)
     expected_payment_date   = models.DateTimeField(auto_now_add=False)
     loan_status             = models.IntegerField()
     date_requested          = models.DateTimeField(auto_now_add=True)
@@ -18,5 +18,5 @@ class LoanPayments(models.Model):
     date_paid               = models.DateTimeField(auto_now_add=True)
     installment_number      = models.IntegerField()
     repayment_penalty       = models.BooleanField(default=False)
-    penalty_amount          = models.DecimalField(max_digits=2, blank=True, null=True)
+    penalty_amount          = models.DecimalField(max_digits=2, decimal_places=2, blank=True, null=True)
 
