@@ -5,7 +5,7 @@ class LoansRetrieveSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=Loans
-        fields = ('borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount')
+        fields = ('id', 'borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount')
 
 class LoanPaymentsRetrieveSerializer(serializers.ModelSerializer):
     pass
