@@ -9,3 +9,18 @@ class LoansRetrieveSerializer(serializers.ModelSerializer):
 
 class LoanPaymentsRetrieveSerializer(serializers.ModelSerializer):
     pass
+
+class LoansFormSerializer(serializers.Serializer):
+    """
+    Loans Form serializer
+    """
+    borrowers_address      = serializers.CharField(max_length=255)
+    loan_amount            = serializers.CharField(max_length=255)
+    repayment_date         = serializers.CharField(max_length=255)
+    borrower_nin_hash      = serializers.CharField(max_length=255)
+
+class LoansCreateSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Loans
+        fields = ('borrower_address', 'borrower_nin_hash', 'loan_amount', 'expected_payment_date', 'loan_status')
