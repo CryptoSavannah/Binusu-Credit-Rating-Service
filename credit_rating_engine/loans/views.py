@@ -1,10 +1,17 @@
 from django.shortcuts import render
-from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer
+from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, UserFormSerializer
 from .models import Loans, LoanPayments
 from rest_framework.views import APIView
 from rest_framework import status
 
 from rest_framework.response import Response
+
+class RegisterUser(APIView):
+
+    def post(self, request):
+        user_data = UserFormSerializer(data=request.data)
+        if user_data.is_valid():
+            pass
 
 
 class BorrowersLoanList(APIView):

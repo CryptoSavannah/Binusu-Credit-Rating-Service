@@ -1,5 +1,26 @@
 from rest_framework import serializers
-from .models import Loans, LoanPayments
+from .models import User ,Loans, LoanPayments
+
+class UserFormSerializer(serializers.Serializer):
+    """
+    User form serializer
+    """
+    full_name             = serializers.CharField(max_length=255)
+    nin_number            = serializers.CharField(max_length=255)
+    physical_address      = serializers.CharField(max_length=255)
+    password              = serializers.CharField(max_length=255)
+
+class UserCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model=User
+        fields=('full_name', 'hashed_nin', 'bnu_address', 'physical_address', 'user_nunber', 'password', 'refferal_id', 'role')
+
+class UserLoginSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model=User
+        fields=('user_number', 'password')
 
 class LoansRetrieveSerializer(serializers.ModelSerializer):
     
