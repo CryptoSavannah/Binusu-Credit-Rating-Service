@@ -17,7 +17,7 @@ class Loans(models.Model):
     pay_id                  = models.CharField(max_length=64, null=True, blank=True)
     loan_amount             = models.DecimalField(max_digits=20, decimal_places=2)
     expected_payment_date   = models.DateField(auto_now_add=False)
-    loan_status             = models.IntegerField()
+    loan_status             = models.IntegerField() 
     date_requested          = models.DateField(auto_now_add=True)
     date_approved           = models.DateField(auto_now_add=False, null=True, blank=True)
     actual_payment_date     = models.DateField(auto_now_add=False, null=True, blank=True)
@@ -30,3 +30,6 @@ class LoanPayments(models.Model):
     repayment_penalty       = models.BooleanField(default=False)
     penalty_amount          = models.DecimalField(max_digits=2, decimal_places=2, blank=True, null=True)
 
+## USERS TABLE
+## ID, NAME, NIN, BNU_ADDRESS, USER_NUMBER, PASSWORD, ROLE(0,1,2), 
+# app id somewhere. 
