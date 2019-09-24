@@ -12,4 +12,6 @@ class CreditRator:
     def sum_all_criteria(self):
         pass
 
+
+
     
