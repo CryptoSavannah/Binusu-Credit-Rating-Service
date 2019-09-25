@@ -29,11 +29,36 @@ def random_string_digits(stringLength=6):
 #get bnu_address
 class BnuAddressCollector:
     def __init__(self):
-        self.__params = {}
+        self.__params = {
+            "node":"https://explorer.binusu.com/get_peer_list/index.php"
+        }
     
     def get_node(self):
-        r = requests.get("https://explorer.binusu.com/get_peer_list/index.php")
-        self.__params.update("node":r.json().peer)
+        headers={'User-Agent': "bincred_client"}
+        r = requests.request("GET", self.__params.get('node'), headers=headers)
+        if r.status_code==200:
+            self.__params.update({"node":r.json().get('peer')})
+            return r.json().get('peer')
+        else:
+            print("failed bitch")
+
+    def get_bnu_address(self, peer):
+        url="https://{}/api/node/bms.php".format(peer)
+        headers={'Content-Type': "multipart/form-data", 'User-Agent': "bincred_client"}
+        payload={
+            'method':'createWallet',
+            'currency':'5',
+            'api_key':'FAD7EE3DE4CB65F62C882038516A9C5F976BB70BCE688FD6854A70DF159142D4',
+            'wallet':'01009'
+        }
+    
+        r = requests.request("POST", url, data=payload, headers=headers)
+        print(r.status_code)
+        print(r.text)
+        return r.json().get('address')
+
+
+
 
 
 

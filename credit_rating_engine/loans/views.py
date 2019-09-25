@@ -3,7 +3,7 @@ from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer
 from .models import Loans, LoanPayments
 from rest_framework.views import APIView
 from rest_framework import status
-from .helpers import hash_input, random_string_digits
+from .helpers import hash_input, random_string_digits, BnuAddressCollector
 
 from rest_framework.response import Response
 
@@ -13,6 +13,10 @@ class RegisterUser(APIView):
         user_data = UserFormSerializer(data=request.data)
         if user_data.is_valid():
             user_number = random_string_digits()
+            bnu_class = BnuAddressCollector()
+            bnu_peer = bnu_class.get_node()
+            bnu_address=bnu_class.get_bnu_address(bnu_peer)
+            print(bnu_address)
 
             user_data_request_save = {
                 "full_name":user_data.data['full_name'],
