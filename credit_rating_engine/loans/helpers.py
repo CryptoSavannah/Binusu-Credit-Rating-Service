@@ -6,6 +6,7 @@ Purpose: Helper classes for the Binusu Credit Rating Service
 import hashlib
 import string
 import random
+import requests
 from .models import Loans, LoanPayments
 
 class CreditRator:
@@ -24,5 +25,16 @@ def random_string_digits(stringLength=6):
     """Generate a random string of letters and digits """
     lettersAndDigits = string.ascii_uppercase + string.digits
     return ''.join(random.choice(lettersAndDigits) for i in range(stringLength))
+
+#get bnu_address
+class BnuAddressCollector:
+    def __init__(self):
+        self.__params = {}
+    
+    def get_node(self):
+        r = requests.get("https://explorer.binusu.com/get_peer_list/index.php")
+        self.__params.update("node":r.json().peer)
+
+
 
     
