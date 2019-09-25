@@ -9,12 +9,14 @@ class UserFormSerializer(serializers.Serializer):
     nin_number            = serializers.CharField(max_length=255)
     physical_address      = serializers.CharField(max_length=255)
     password              = serializers.CharField(max_length=255)
+    refferal_id           = serializers.CharField(max_length=255)
+    role                  = serializers.IntegerField()
 
 class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=User
-        fields=('full_name', 'hashed_nin', 'bnu_address', 'physical_address', 'user_nunber', 'password', 'refferal_id', 'role')
+        fields=('full_name', 'hashed_nin', 'bnu_address', 'physical_address', 'user_number', 'password', 'refferal_id', 'role')
 
 class UserLoginSerializer(serializers.ModelSerializer):
 
