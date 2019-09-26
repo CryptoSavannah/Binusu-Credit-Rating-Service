@@ -2,13 +2,17 @@ from django.db import models
 
 class User(models.Model):
     full_name               = models.CharField(max_length=255)
-    hashed_nin              = models.CharField(max_length=64)
+    hashed_nin              = models.CharField(max_length=64, unique=True)
     bnu_address             = models.CharField(max_length=108)
     physical_address        = models.CharField(max_length=255)
     user_number             = models.CharField(max_length=255)
     password                = models.CharField(max_length=255)
     refferal_id             = models.CharField(max_length=6)
     role                    = models.IntegerField()
+
+    class Meta:
+        unique_together = ['hashed_nin', 'user_number']
+
 
 class Loans(models.Model):
     borrower_address        = models.CharField(max_length=108)
@@ -29,7 +33,3 @@ class LoanPayments(models.Model):
     installment_number      = models.IntegerField()
     repayment_penalty       = models.BooleanField(default=False)
     penalty_amount          = models.DecimalField(max_digits=2, decimal_places=2, blank=True, null=True)
-
-## USERS TABLE
-## ID, NAME, NIN, BNU_ADDRESS, USER_NUMBER, PASSWORD, ROLE(0,1,2), 
-# app id somewhere. 
