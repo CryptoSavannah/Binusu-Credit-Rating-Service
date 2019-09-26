@@ -1,42 +1,11 @@
 from django.shortcuts import render
-from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, UserFormSerializer, UserCreateSerializer
+from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer
 from .models import Loans, LoanPayments
 from rest_framework.views import APIView
 from rest_framework import status
-from .helpers import hash_input, random_string_digits, BnuAddressCollector
+from .helpers import BnuAddressCollector
 
 from rest_framework.response import Response
-
-class RegisterUser(APIView):
-
-    def post(self, request):
-        user_data = UserFormSerializer(data=request.data)
-        if user_data.is_valid():
-            user_number = random_string_digits()
-            # bnu_class = BnuAddressCollector()
-            # bnu_peer = bnu_class.get_node()
-            # bnu_address=bnu_class.get_bnu_address(bnu_peer)
-            # print(bnu_address)
-
-            user_data_request_save = {
-                "full_name":user_data.data['full_name'],
-                "hashed_nin":hash_input(user_data.data['nin_number']),
-                "bnu_address":hash_input(user_data.data['nin_number']),
-                "physical_address":user_data.data['physical_address'],
-                "user_number": user_number,
-                "password":hash_input(user_data.data['password']),
-                "refferal_id":user_data.data['refferal_id'],
-                "role":user_data.data['role']
-            }
-
-            user_date_request_transaction = UserCreateSerializer(data=user_data_request_save)
-            user_date_request_transaction.is_valid(raise_exception=True)
-            user_date_request_transaction.save()
-
-            data_dict = {"status":201, "user_details":user_date_request_transaction.data}
-            return Response(data_dict, status=status.HTTP_201_CREATED)
-
-        return Response(user_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BorrowersLoanList(APIView):

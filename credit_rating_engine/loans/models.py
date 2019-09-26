@@ -1,19 +1,5 @@
 from django.db import models
 
-class User(models.Model):
-    full_name               = models.CharField(max_length=255)
-    hashed_nin              = models.CharField(max_length=64, unique=True)
-    bnu_address             = models.CharField(max_length=108)
-    physical_address        = models.CharField(max_length=255)
-    user_number             = models.CharField(max_length=255)
-    password                = models.CharField(max_length=255)
-    refferal_id             = models.CharField(max_length=6)
-    role                    = models.IntegerField()
-
-    class Meta:
-        unique_together = ['hashed_nin', 'user_number']
-
-
 class Loans(models.Model):
     borrower_address        = models.CharField(max_length=108)
     lending_address         = models.CharField(max_length=108, null=True, blank=True)
