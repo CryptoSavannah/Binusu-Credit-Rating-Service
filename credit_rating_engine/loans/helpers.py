@@ -8,6 +8,10 @@ import string
 import random
 import requests
 from .models import Loans, LoanPayments
+import os
+from django.conf import settings
+
+file_ = open(os.path.join(settings.BASE_DIR, 'loans/test.txt'))
 
 class CreditRator:
     def __init__(self):
@@ -44,15 +48,14 @@ class BnuAddressCollector:
 
     def get_bnu_address(self, peer):
         url="https://{}/api/node/bms.php".format(peer)
-        headers={'Content-Type': "multipart/form-data", 'User-Agent': "bincred_client"}
-        payload={
-            'method':'createWallet',
-            'currency':'5',
-            'api_key':'FAD7EE3DE4CB65F62C882038516A9C5F976BB70BCE688FD6854A70DF159142D4',
-            'wallet':'01009'
-        }
+        headers={'content-type': 'multipart/form-data'}
     
-        r = requests.request("POST", url, data=payload, headers=headers)
+        r = requests.request('POST', url, 
+            files={'name': open(file_, 'r'), 'method':'createWallet',
+            'currency':5,
+            'api_key':'FAD7EE3DE4CB65F62C882038516A9C5F976BB70BCE688FD6854A70DF159142D4',
+            'wallet':'01016'
+        }).prepare()
         print(r.status_code)
         print(r.text)
         return r.json().get('address')

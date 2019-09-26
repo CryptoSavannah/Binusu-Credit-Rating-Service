@@ -13,15 +13,15 @@ class RegisterUser(APIView):
         user_data = UserFormSerializer(data=request.data)
         if user_data.is_valid():
             user_number = random_string_digits()
-            bnu_class = BnuAddressCollector()
-            bnu_peer = bnu_class.get_node()
-            bnu_address=bnu_class.get_bnu_address(bnu_peer)
-            print(bnu_address)
+            # bnu_class = BnuAddressCollector()
+            # bnu_peer = bnu_class.get_node()
+            # bnu_address=bnu_class.get_bnu_address(bnu_peer)
+            # print(bnu_address)
 
             user_data_request_save = {
                 "full_name":user_data.data['full_name'],
                 "hashed_nin":hash_input(user_data.data['nin_number']),
-                "bnu_address":"some_address",
+                "bnu_address":hash_input(user_data.data['nin_number']),
                 "physical_address":user_data.data['physical_address'],
                 "user_number": user_number,
                 "password":hash_input(user_data.data['password']),
