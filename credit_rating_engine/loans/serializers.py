@@ -24,3 +24,6 @@ class LoansCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Loans
         fields = ('borrower_address', 'borrower_nin_hash', 'loan_amount', 'expected_payment_date', 'loan_status')
+
+class LoanRequestSerializer(serializers.Serializer):
+    borrowers_address      = serializers.CharField(max_length=255)
