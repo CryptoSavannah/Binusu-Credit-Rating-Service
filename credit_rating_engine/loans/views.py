@@ -1,14 +1,18 @@
 from django.shortcuts import render
-from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer
+from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, LoanRequestSerializer
 from .models import Loans, LoanPayments
 from rest_framework.views import APIView
 from rest_framework import status
 from .helpers import BnuAddressCollector
+from accounts.permissions import ClientPermissions
 
 from rest_framework.response import Response
+from rest_framework import permissions
 
 
 class BorrowersLoanList(APIView):
+
+    permission_classes = (permissions.IsAuthenticated, )
 
     def get(self, request, format=None):
         snippets = Loans.objects.all()
@@ -36,3 +40,17 @@ class BorrowersLoanList(APIView):
             return Response(data_dict, status=status.HTTP_201_CREATED)
 
         return Response(loan_request.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BorrowerLoanRequestList(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        borrower_requests = LoanRequestSerializer(data=request.data)
+        if borrower_requests.is_valid():
+            loan_requests=Loans.objects.filter(borrower_address=borrower_requests.data['borrowers_address'])
+            serializer = LoansCreateSerializer(loan_requests, many=True)
+            data_dict = {"status":200, "data":serializer.data}
+            return Response(data_dict, status=status.HTTP_200_OK)
+        return Response(loan_request.errors, status=status.HTTP_400_BAD_REQUEST)
+

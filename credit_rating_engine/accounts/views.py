@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework.response import Response
 from .helpers import hash_input, random_string_digits
+from loans.helpers import BnuAddressCollector
 
 from .serializers import CreateUserSerializer, GetUserCreateSerializer, UserCreateFormSerializer, UserDetailSerializer
 
@@ -65,6 +66,10 @@ class RegisterView(generics.CreateAPIView):
         serializer = UserCreateFormSerializer(data=request.data)
         if serializer.is_valid():
 
+            bnu_address = BnuAddressCollector()
+            bnu_address_node = bnu_address.get_node()
+            collected_bnu_address = bnu_address.get_bnu_address(bnu_address_node)
+
             user_data = {
                 'username':random_string_digits(),
                 'first_name':serializer.data['first_name'],
@@ -72,7 +77,7 @@ class RegisterView(generics.CreateAPIView):
                 'email':'email@email.com',
                 'password':serializer.data['password'],
                 'hashed_nin':hash_input(serializer.data['nin_number']),
-                'bnu_address':hash_input(serializer.data['nin_number']),
+                'bnu_address':collected_bnu_address,
                 'physical_address':serializer.data['physical_address'],
                 'refferal_id':serializer.data['refferal_id'],
                 'role':serializer.data['role'],
