@@ -38,16 +38,14 @@ class BnuAddressCollector:
 
     def get_bnu_address(self, peer):
         url="https://{}/api/node/bms.php".format(peer)
-        headers={'content-type': 'multipart/form-data'}
+        headers={'Content-Type': 'application/json'}
     
-        r = requests.request('POST', url, 
-            files={'name': open(file_, 'r'), 'method':'createWallet',
+        r = requests.request('POST', url, data={
+            'method':'createWallet',
             'currency':5,
             'api_key':'FAD7EE3DE4CB65F62C882038516A9C5F976BB70BCE688FD6854A70DF159142D4',
             'wallet':'01016'
-        }).prepare()
-        print(r.status_code)
-        print(r.text)
+        })
         return r.json().get('address')
 
 
