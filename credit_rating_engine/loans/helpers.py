@@ -11,8 +11,6 @@ from .models import Loans, LoanPayments
 import os
 from django.conf import settings
 
-file_ = open(os.path.join(settings.BASE_DIR, 'loans/test.txt'))
-
 class CreditRator:
     def __init__(self):
         pass

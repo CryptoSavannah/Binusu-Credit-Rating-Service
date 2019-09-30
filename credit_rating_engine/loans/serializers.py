@@ -5,7 +5,7 @@ class LoansRetrieveSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=Loans
-        fields = ('id', 'borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount')
+        fields = ('id', 'borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount', 'loan_status')
 
 class LoanPaymentsRetrieveSerializer(serializers.ModelSerializer):
     pass
@@ -23,7 +23,7 @@ class LoansCreateSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Loans
-        fields = ('borrower_address', 'borrower_nin_hash', 'loan_amount', 'expected_payment_date', 'loan_status')
+        fields = ('id', 'borrower_address', 'borrower_nin_hash', 'loan_amount', 'expected_payment_date', 'loan_status')
 
 class LoanRequestSerializer(serializers.Serializer):
-    borrowers_address      = serializers.CharField(max_length=255)
+    address      = serializers.CharField(max_length=255)

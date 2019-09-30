@@ -7,4 +7,4 @@ class User(AbstractUser):
     physical_address        = models.CharField(max_length=255)
     user_number             = models.CharField(max_length=255)
     refferal_id             = models.CharField(max_length=6)
-    role                    = models.IntegerField()
+    role                    = models.IntegerField(null=True, blank=True)

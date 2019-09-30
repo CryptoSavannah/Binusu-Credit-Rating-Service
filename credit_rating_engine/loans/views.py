@@ -15,7 +15,7 @@ class BorrowersLoanList(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
     def get(self, request, format=None):
-        snippets = Loans.objects.all()
+        snippets = Loans.objects.filter(loan_status=0)
         serializer = LoansRetrieveSerializer(snippets, many=True)
         data_dict = {"status":200, "data":serializer.data}
         return Response(data_dict, status=status.HTTP_200_OK)
@@ -47,10 +47,50 @@ class BorrowerLoanRequestList(APIView):
 
     def post(self, request):
         borrower_requests = LoanRequestSerializer(data=request.data)
+        loan_status = self.request.query_params.get('status', None)
+
         if borrower_requests.is_valid():
-            loan_requests=Loans.objects.filter(borrower_address=borrower_requests.data['borrowers_address'])
+            if loan_status=="unapproved":
+                loan_requests=Loans.objects.filter(borrower_address=borrower_requests.data['address']).filter(loan_status=0)
+            elif loan_status=="unpaid":
+                loan_requests=Loans.objects.filter(borrower_address=borrower_requests.data['address']).filter(loan_status=2)
+
+
             serializer = LoansCreateSerializer(loan_requests, many=True)
             data_dict = {"status":200, "data":serializer.data}
             return Response(data_dict, status=status.HTTP_200_OK)
         return Response(loan_request.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoansDetail(APIView):
+    """
+    Retrieve, update or delete a snippet instance.
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, pk, format=None):
+        particular_loan = Loans.objects.get(pk=pk)
+        serializer = LoansRetrieveSerializer(particular_loan)
+        data_dict = {"data":serializer.data, "status":200}
+        return Response(data_dict, status=status.HTTP_200_OK)
+
+
+class TransactionHistory(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        address = LoanRequestSerializer(data=request.data)
+        role = self.request.query_params.get('role', None)
+
+        if address.is_valid():
+            if role=="borrower":
+                loan_requests=Loans.objects.filter(borrower_address=address.data['address']).filter(loan_status=4)
+            elif role=="lender":
+                loan_requests=Loans.objects.filter(lending_address=address.data['address']).filter(loan_status=4)
+
+
+            serializer = LoansCreateSerializer(loan_requests, many=True)
+            data_dict = {"status":200, "data":serializer.data}
+            return Response(data_dict, status=status.HTTP_200_OK)
+        return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
+       
 
