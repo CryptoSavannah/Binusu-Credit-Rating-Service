@@ -30,6 +30,7 @@ class BorrowersLoanList(APIView):
                 "loan_amount":loan_request.data['loan_amount'],
                 "expected_payment_date": loan_request.data['repayment_date'],
                 "loan_status":0,
+                "expected_amount": loan_request.data['expected_amount']
             }
 
             loan_request_transaction = LoansCreateSerializer(data=loan_request_save)
