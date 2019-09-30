@@ -57,7 +57,7 @@ class BorrowerLoanRequestList(APIView):
                 loan_requests=Loans.objects.filter(borrower_address=borrower_requests.data['address']).filter(loan_status=2)
 
 
-            serializer = LoansCreateSerializer(loan_requests, many=True)
+            serializer = LoansRetrieveSerializer(loan_requests, many=True)
             data_dict = {"status":200, "data":serializer.data}
             return Response(data_dict, status=status.HTTP_200_OK)
         return Response(loan_request.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -89,7 +89,7 @@ class TransactionHistory(APIView):
                 loan_requests=Loans.objects.filter(lending_address=address.data['address']).filter(loan_status=4)
 
 
-            serializer = LoansCreateSerializer(loan_requests, many=True)
+            serializer = LoansRetrieveSerializer(loan_requests, many=True)
             data_dict = {"status":200, "data":serializer.data}
             return Response(data_dict, status=status.HTTP_200_OK)
         return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
