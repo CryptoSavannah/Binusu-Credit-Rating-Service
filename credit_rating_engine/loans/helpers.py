@@ -35,16 +35,15 @@ class BnuAddressCollector:
             print("failed bitch")
 
     def get_bnu_address(self, peer):
-        url="https://{}/api/node/bms.php".format(peer)
+        url="https://{}/api/node/mobile_api.php".format(peer)
         headers={'Content-Type': 'application/json'}
     
         r = requests.request('POST', url, data={
-            'method':'createWallet',
-            'currency':5,
-            'api_key':'FAD7EE3DE4CB65F62C882038516A9C5F976BB70BCE688FD6854A70DF159142D4',
-            'wallet':'01016'
+            'method':'createMobileWallet',
         })
-        return r.json().get('address')
+        print(r.json())
+        response = r.json().get('response')
+        return [response.get('address'), response.get('spendSecretKey'), response.get('spendPublicKey')]
 
 
 

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Loans, LoanPayments
+from accounts.models import User
 
 class LoansRetrieveSerializer(serializers.ModelSerializer):
     
@@ -28,3 +29,10 @@ class LoansCreateSerializer(serializers.ModelSerializer):
 
 class LoanRequestSerializer(serializers.Serializer):
     address      = serializers.CharField(max_length=255)
+    
+
+class SpendKeySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = User
+        fields = ('spendp_key', 'spendpr_key')
