@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, LoanRequestSerializer
+from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, LoanRequestSerializer, SpendKeySerializer
 from .models import Loans, LoanPayments
+from accounts.models import User
 from rest_framework.views import APIView
 from rest_framework import status
 from .helpers import BnuAddressCollector
@@ -93,5 +94,23 @@ class TransactionHistory(APIView):
             data_dict = {"status":200, "data":serializer.data}
             return Response(data_dict, status=status.HTTP_200_OK)
         return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetSpendingKeys(APIView):
+    """
+    Retrieve, update or delete a snippet instance.
+    """
+    def post(self, request):
+        address = LoanRequestSerializer(data=request.data)
+
+        if address.is_valid():
+            user_account = User.objects.get(bnu_address=address.data['address'])
+
+            serializer = SpendKeySerializer(user_account)
+            data_dict = {"status":200, "data":serializer.data}
+            return Response(data_dict, status=status.HTTP_200_OK)
+        return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
        
 
