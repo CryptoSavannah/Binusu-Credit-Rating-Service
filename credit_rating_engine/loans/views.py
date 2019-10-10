@@ -136,5 +136,45 @@ class LentMoney(APIView):
         return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class SavingsWithdrawal(APIView):
+    """
+    Withdraw savings from account
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        withraw_data = request.data.copy()
+        account_number = withraw_data.pop('account_number')
+        savings_account_related = SavingsAccount.objects.get(account_number=account_number[0])
+
+        savings_withdrawal_serilizer = SavingsWithdrawalSerializer(data=request.data)
+        if savings_withdrawal_serilizer.is_valid():
+            savings_withdrawal_serilizer.save(savings_account_related=savings_account_related)
+
+            saving_amount_update = {
+                "account_balance": float(savings_account_related.account_balance)-float(savings_withdrawal_serilizer.data['amount_withdrawn']),
+                "running_balance": float(savings_account_related.running_balance)-float(savings_withdrawal_serilizer.data['amount_withdrawn']),
+            }
+
+            SavingsAccount.objects.update_or_create(
+                        id=savings_account_related.pk, defaults=saving_amount_update)
+
+            savings_account_updated = get_object(SavingsAccount, savings_account_related.pk)
+
+            #send twilio sms with payment details
+            phone_number = "{}{}".format(savings_account_related.group_member_related.phone_dialing_code, savings_account_related.group_member_related.phone_number)
+            message = "You have withdrawn {} from Savings account Number {}. Your Balance is {}".format(savings_withdrawal_serilizer.data['amount_withdrawn'], savings_account_updated.account_number, savings_account_updated.account_balance)
+            try:
+                send_sms(phone_number, message)
+            except:
+                print("Message Not sending")
+
+            data_dict = {"status":200, "data":savings_withdrawal_serilizer.data, "savings_account": savings_account_updated.account_balance}
+            return Response(data_dict, status=status.HTTP_201_CREATED)
+        else:
+            savings_withdraw_dict={"status":400, "error":savings_withdrawal_serilizer.errors}
+        return Response(savings_withdraw_dict, status=status.HTTP_200_OK)
+
+
        
 
