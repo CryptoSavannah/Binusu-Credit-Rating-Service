@@ -100,6 +100,43 @@ class GetSpendingKeys(APIView):
     """
     Retrieve, update or delete a snippet instance.
     """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        address = LoanRequestSerializer(data=request.data)
+
+        if address.is_valid():
+            user_account = User.objects.get(bnu_address=address.data['address'])
+
+            serializer = SpendKeySerializer(user_account)
+            data_dict = {"status":200, "data":serializer.data}
+            return Response(data_dict, status=status.HTTP_200_OK)
+        return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LentMoney(APIView):
+    """
+    Retrieve, update or delete a snippet instance.
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+    
+    def post(self, request):
+        address = LoanRequestSerializer(data=request.data)
+
+        if address.is_valid():
+            user_account = User.objects.get(bnu_address=address.data['address'])
+
+            serializer = SpendKeySerializer(user_account)
+            data_dict = {"status":200, "data":serializer.data}
+            return Response(data_dict, status=status.HTTP_200_OK)
+        return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TotalInterestOpenLoans(APIView):
+    """
+    Retrieve, update or delete a snippet instance.
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+    
     def post(self, request):
         address = LoanRequestSerializer(data=request.data)
 
