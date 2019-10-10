@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, LoanRequestSerializer, SpendKeySerializer
+from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, LoanRequestSerializer, SpendKeySerializer, LoanIdSerializer
 from .models import Loans, LoanPayments
 from accounts.models import User
 from rest_framework.views import APIView
@@ -7,6 +7,7 @@ from rest_framework import status
 from .helpers import BnuAddressCollector
 from accounts.permissions import ClientPermissions
 from django.db.models import Avg, Count, Min, Sum
+import datetime
 
 from rest_framework.response import Response
 from rest_framework import permissions
@@ -134,6 +135,33 @@ class LentMoney(APIView):
             data_dict = {"status":200, "data":{"loan_amount":open_loans['loan_amount'], "interest":interest}}
             return Response(data_dict, status=status.HTTP_200_OK)
         return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EditLoanStatus(APIView):
+   
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        loanid = LoanIdSerializer(data=request.data)
+
+        if loanid.is_valid():
+            loan_to_approve = Loans.objects.get(pk=loanid.data['loan_id'])
+
+            loan_update = {
+                "loan_status":loanid.data['status'],
+                "date_approved":datetime.date.today()
+            }
+
+            Loans.objects.update_or_create(
+                        id=loan_to_approve.pk, defaults=loan_update)
+
+            loan_to_approve_updated = Loans.objects.get(pk=loanid.data['loan_id'])
+
+            serializer = LoansRetrieveSerializer(loan_to_approve_updated)
+            data_dict = {"status":200, "data": serializer.data}
+            return Response(data_dict, status=status.HTTP_201_CREATED)
+        
+        return Response(loanid.errors, status=status.HTTP_200_OK)
 
 
        

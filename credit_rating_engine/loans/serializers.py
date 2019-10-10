@@ -6,7 +6,7 @@ class LoansRetrieveSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=Loans
-        fields = ('id', 'borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount', 'loan_status', 'date_requested', 'date_approved', 'actual_payment_date', 'expected_amount')
+        fields = ('id', 'borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount', 'loan_status', 'date_requested', 'date_approved', 'actual_payment_date', 'expected_amount', 'expected_payment_date')
 
 class LoanPaymentsRetrieveSerializer(serializers.ModelSerializer):
     pass
@@ -36,3 +36,7 @@ class SpendKeySerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('spendp_key', 'spendpr_key')
+
+class LoanIdSerializer(serializers.Serializer):
+    loan_id      = serializers.CharField(max_length=10)
+    status       = serializers.CharField(max_length=2)   
