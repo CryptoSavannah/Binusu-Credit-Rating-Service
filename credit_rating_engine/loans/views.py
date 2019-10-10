@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .helpers import BnuAddressCollector
 from accounts.permissions import ClientPermissions
+from django.db.models import Avg, Count, Min, Sum
 
 from rest_framework.response import Response
 from rest_framework import permissions
@@ -100,6 +101,8 @@ class GetSpendingKeys(APIView):
     """
     Retrieve, update or delete a snippet instance.
     """
+    permission_classes = (permissions.IsAuthenticated, )
+
     def post(self, request):
         address = LoanRequestSerializer(data=request.data)
 
@@ -108,6 +111,27 @@ class GetSpendingKeys(APIView):
 
             serializer = SpendKeySerializer(user_account)
             data_dict = {"status":200, "data":serializer.data}
+            return Response(data_dict, status=status.HTTP_200_OK)
+        return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LentMoney(APIView):
+    
+    permission_classes = (permissions.IsAuthenticated, )
+    
+    def post(self, request):
+        address = LoanRequestSerializer(data=request.data)
+
+        if address.is_valid():
+            open_loans = Loans.objects.filter(lending_address=address.data['address']).filter(loan_status=2).aggregate(loan_amount = Sum('loan_amount'))
+
+            interest_open_loans = Loans.objects.filter(lending_address=address.data['address']).filter(loan_status=2).aggregate(expected_amount = Sum('expected_amount'))
+            
+            if open_loans['loan_amount']==None and interest_open_loans['expected_amount']==None:
+                data_dict = {"status":200, "data":{"loan_amount":0, "interest":0}}
+                return Response(data_dict, status=status.HTTP_200_OK)
+            interest = interest_open_loans['expected_amount'] - open_loans['loan_amount']
+            data_dict = {"status":200, "data":{"loan_amount":open_loans['loan_amount'], "interest":interest}}
             return Response(data_dict, status=status.HTTP_200_OK)
         return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
 
