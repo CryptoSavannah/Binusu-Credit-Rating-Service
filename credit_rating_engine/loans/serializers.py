@@ -38,5 +38,7 @@ class SpendKeySerializer(serializers.ModelSerializer):
         fields = ('spendp_key', 'spendpr_key')
 
 class LoanIdSerializer(serializers.Serializer):
-    loan_id      = serializers.CharField(max_length=10)
-    status       = serializers.CharField(max_length=2)   
+    loan_id         = serializers.CharField(max_length=10)
+    status          = serializers.CharField(max_length=2)
+    lending_address = serializers.CharField(max_length=255)  
+    pay_id          = serializers.CharField(max_length=255)     

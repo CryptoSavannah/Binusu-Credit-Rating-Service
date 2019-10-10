@@ -149,7 +149,9 @@ class EditLoanStatus(APIView):
 
             loan_update = {
                 "loan_status":loanid.data['status'],
-                "date_approved":datetime.date.today()
+                "date_approved":datetime.date.today(),
+                "lending_address":loanid.data['lending_address'],
+                "pay_id":loanid.data['pay_id']
             }
 
             Loans.objects.update_or_create(
