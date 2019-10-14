@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from .serializers import LoansRetrieveSerializer, LoanPaymentsRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, LoanRequestSerializer, SpendKeySerializer, LoanIdSerializer
+from django.db.models import Q
+from .serializers import LoansRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, LoanRequestSerializer, SpendKeySerializer, LoanIdSerializer, LoanRepaymentSerializer, LoanRepaymentModelSerializer, IdSerializer, LoanPaymentsListSerializer
 from .models import Loans, LoanPayments
 from accounts.models import User
 from rest_framework.views import APIView
@@ -89,7 +90,7 @@ class TransactionHistory(APIView):
             if role=="borrower":
                 loan_requests=Loans.objects.filter(borrower_address=address.data['address']).filter(loan_status=4)
             elif role=="lender":
-                loan_requests=Loans.objects.filter(lending_address=address.data['address']).filter(loan_status=4)
+                loan_requests=Loans.objects.filter(lending_address=address.data['address'])
 
 
             serializer = LoansRetrieveSerializer(loan_requests, many=True)
@@ -164,6 +165,82 @@ class EditLoanStatus(APIView):
             return Response(data_dict, status=status.HTTP_201_CREATED)
         
         return Response(loanid.errors, status=status.HTTP_200_OK)
+
+class MakeLoanRepayment(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        loanid = LoanRepaymentSerializer(data=request.data)
+
+        if loanid.is_valid():
+            loan_to_pay = Loans.objects.get(pk=loanid.data['loan_id'])
+
+            if float(loanid.data['amount']) >= float(loan_to_pay.expected_amount):
+                loan_update = {
+                    "loan_status":4,
+                    "outstanding_amount":0,
+                }
+
+                Loans.objects.update_or_create(
+                            id=loan_to_pay.pk, defaults=loan_update)
+
+                loan_to_approve_updated = Loans.objects.get(pk=loanid.data['loan_id'])
+
+                loan_repayment_save = {
+                "loan_id":loan_to_approve_updated.pk,
+                "installment_amount":loanid.data['amount'],
+                "paying_address":loanid.data['paying_address'],
+                "installment_number": 1
+                }
+
+                loan_repayment_transaction = LoanRepaymentModelSerializer(data=loan_repayment_save)
+                loan_repayment_transaction.is_valid(raise_exception=True)
+                loan_repayment_transaction.save()
+
+                data_dict = {"status":201, "data": loan_repayment_transaction.data}
+                return Response(data_dict, status=status.HTTP_201_CREATED)
+            else:
+                loan_update = {
+                    "loan_status":3,
+                    "outstanding_amount":float(loan_to_pay.expected_amount)-float(loanid.data['amount']),
+                }
+
+                Loans.objects.update_or_create(
+                            id=loan_to_pay.pk, defaults=loan_update)
+
+                loan_to_approve_updated = Loans.objects.get(pk=loanid.data['loan_id'])
+
+                loan_repayment_save = {
+                "loan_id":loan_to_approve_updated.pk,
+                "installment_amount":loanid.data['amount'],
+                "paying_address":loanid.data['paying_address'],
+                "installment_number": 1
+                }
+
+                loan_repayment_transaction = LoanRepaymentModelSerializer(data=loan_repayment_save)
+                loan_repayment_transaction.is_valid(raise_exception=True)
+                loan_repayment_transaction.save()
+
+                data_dict = {"status":201, "data": loan_repayment_transaction.data}
+                return Response(data_dict, status=status.HTTP_201_CREATED)
+        
+        return Response(loanid.errors, status=status.HTTP_200_OK)
+
+
+class LoanRepaymentsList(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        loan_id = IdSerializer(data=request.data)
+
+        if loan_id.is_valid():
+            loan = Loans.objects.get(pk=loan_id.data['loan_id'])
+            loanpayments = LoanPayments.objects.filter(loan_id=loan)
+
+            serializer = LoanPaymentsListSerializer(loanpayments, many=True)
+            data_dict = {"status":200, "data":serializer.data}
+            return Response(data_dict, status=status.HTTP_200_OK)
+        return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
        

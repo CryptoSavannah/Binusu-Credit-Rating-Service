@@ -6,10 +6,7 @@ class LoansRetrieveSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=Loans
-        fields = ('id', 'borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount', 'loan_status', 'date_requested', 'date_approved', 'actual_payment_date', 'expected_amount', 'expected_payment_date')
-
-class LoanPaymentsRetrieveSerializer(serializers.ModelSerializer):
-    pass
+        fields = ('id', 'borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount', 'loan_status', 'date_requested', 'date_approved', 'actual_payment_date', 'expected_amount', 'expected_payment_date', 'outstanding_amount')
 
 class LoansFormSerializer(serializers.Serializer):
     """
@@ -41,4 +38,24 @@ class LoanIdSerializer(serializers.Serializer):
     loan_id         = serializers.CharField(max_length=10)
     status          = serializers.CharField(max_length=2)
     lending_address = serializers.CharField(max_length=255)  
-    pay_id          = serializers.CharField(max_length=255)     
+    pay_id          = serializers.CharField(max_length=255) 
+
+class LoanRepaymentSerializer(serializers.Serializer):
+    loan_id         = serializers.CharField(max_length=10)
+    paying_address  = serializers.CharField(max_length=255)  
+    amount          = serializers.CharField(max_length=255)  
+
+class LoanRepaymentModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LoanPayments
+        fields = ('loan_id', 'installment_amount', 'paying_address', 'installment_number') 
+
+class IdSerializer(serializers.Serializer):
+    loan_id         = serializers.CharField(max_length=10)
+
+class LoanPaymentsListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LoanPayments
+        fields = ('loan_id', 'installment_amount', 'paying_address', 'installment_number', 'date_paid', 'repayment_penalty') 

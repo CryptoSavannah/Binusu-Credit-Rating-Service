@@ -7,6 +7,7 @@ class Loans(models.Model):
     pay_id                  = models.CharField(max_length=64, null=True, blank=True)
     loan_amount             = models.DecimalField(max_digits=20, decimal_places=2)
     expected_amount         = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    outstanding_amount      = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     expected_payment_date   = models.DateField(auto_now_add=False)
     loan_status             = models.IntegerField() 
     date_requested          = models.DateField(auto_now_add=True)
@@ -15,6 +16,7 @@ class Loans(models.Model):
 
 class LoanPayments(models.Model):
     loan_id                 = models.ForeignKey(Loans, on_delete=models.CASCADE, related_name="related_loan")
+    installment_amount      = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     paying_address          = models.CharField(max_length=108)
     date_paid               = models.DateTimeField(auto_now_add=True)
     installment_number      = models.IntegerField()
