@@ -6,7 +6,7 @@ class LoansRetrieveSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=Loans
-        fields = ('id', 'borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount', 'loan_status', 'date_requested', 'date_approved', 'actual_payment_date', 'expected_amount', 'expected_payment_date')
+        fields = ('id', 'borrower_address', 'lending_address', 'borrower_nin_hash', 'pay_id', 'loan_amount', 'loan_status', 'date_requested', 'date_approved', 'actual_payment_date', 'expected_amount', 'expected_payment_date', 'outstanding_amount')
 
 class LoansFormSerializer(serializers.Serializer):
     """
