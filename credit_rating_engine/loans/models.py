@@ -22,3 +22,16 @@ class LoanPayments(models.Model):
     installment_number      = models.IntegerField()
     repayment_penalty       = models.BooleanField(default=False)
     penalty_amount          = models.DecimalField(max_digits=2, decimal_places=2, blank=True, null=True)
+
+class CreditScores(models.Model):
+    score_owner_address             = models.CharField(max_length=108)
+    credit_refferal                 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    network_contribution            = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    new_credit                      = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)   
+    loan_frequency                  = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    initial_repayment_installment   = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    average_number_of_installments  = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    loan_completion                 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    late_payment_penalties          = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    final_score                     = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    date_computed                   = models.DateTimeField(auto_now_add=True)
