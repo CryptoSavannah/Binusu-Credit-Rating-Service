@@ -35,3 +35,10 @@ class CreditScores(models.Model):
     late_payment_penalties          = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     final_score                     = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     date_computed                   = models.DateTimeField(auto_now_add=True)
+
+class LendingRank(models.Model):
+    rank_owner_address              = models.CharField(max_length=108)
+    number_of_loans_monthly         = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    amount_lent_monthly             = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    final_score                     = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    date_computed                   = models.DateTimeField(auto_now_add=True)
