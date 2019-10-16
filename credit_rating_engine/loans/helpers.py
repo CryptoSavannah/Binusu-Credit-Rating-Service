@@ -18,6 +18,10 @@ class CreditRator:
     def sum_all_criteria(self):
         pass
 
+    def credit_refferal_score(self, creditor):
+        if creditor.refferal_id == None:
+            return 80
+
 #get bnu_address
 class BnuAddressCollector:
     def __init__(self):

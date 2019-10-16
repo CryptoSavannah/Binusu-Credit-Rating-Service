@@ -35,6 +35,7 @@ class BorrowersLoanList(APIView):
                 "expected_payment_date": loan_request.data['repayment_date'],
                 "loan_status":0,
                 "expected_amount": loan_request.data['expected_amount']
+                "outstanding_amount": loan_request.data['loan_amount'],
             }
 
             loan_request_transaction = LoansCreateSerializer(data=loan_request_save)
@@ -58,8 +59,9 @@ class BorrowerLoanRequestList(APIView):
             if loan_status=="unapproved":
                 loan_requests=Loans.objects.filter(borrower_address=borrower_requests.data['address']).filter(loan_status=0)
             elif loan_status=="unpaid":
-                loan_requests=Loans.objects.filter(borrower_address=borrower_requests.data['address']).filter(loan_status=2)
-
+                unpaid=Loans.objects.filter(borrower_address=borrower_requests.data['address']).filter(loan_status=2)
+                installments=Loans.objects.filter(borrower_address=borrower_requests.data['address']).filter(loan_status=3)
+                loan_requests = unpaid.union(installments)
 
             serializer = LoansRetrieveSerializer(loan_requests, many=True)
             data_dict = {"status":200, "data":serializer.data}
@@ -134,6 +136,24 @@ class LentMoney(APIView):
                 return Response(data_dict, status=status.HTTP_200_OK)
             interest = interest_open_loans['expected_amount'] - open_loans['loan_amount']
             data_dict = {"status":200, "data":{"loan_amount":open_loans['loan_amount'], "interest":interest}}
+            return Response(data_dict, status=status.HTTP_200_OK)
+        return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BorrowedMoney(APIView):
+
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        address = LoanRequestSerializer(data=request.data)
+
+        if address.is_valid():
+            open_loans = Loans.objects.filter(borrower_address=address.data['address']).filter(loan_status=2).aggregate(loan_amount = Sum('loan_amount'))
+            
+            if open_loans['loan_amount']==None:
+                data_dict = {"status":200, "data":{"loan_amount":0}}
+                return Response(data_dict, status=status.HTTP_200_OK)
+            data_dict = {"status":200, "data":{"loan_amount":open_loans['loan_amount']}}
             return Response(data_dict, status=status.HTTP_200_OK)
         return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
 
