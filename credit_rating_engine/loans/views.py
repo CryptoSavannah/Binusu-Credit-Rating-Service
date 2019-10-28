@@ -19,7 +19,7 @@ class BorrowersLoanList(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
     def get(self, request, format=None):
-        snippets = Loans.objects.filter(loan_status=0)
+        snippets = Loans.objects.filter(loan_status=0).exclude(borrower_address=request.query_params['address'])
         serializer = LoansRetrieveSerializer(snippets, many=True)
         data_dict = {"status":200, "data":serializer.data}
         return Response(data_dict, status=status.HTTP_200_OK)
