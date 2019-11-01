@@ -149,11 +149,12 @@ class BorrowedMoney(APIView):
 
         if address.is_valid():
             open_loans = Loans.objects.filter(borrower_address=address.data['address']).filter(loan_status=2).aggregate(loan_amount = Sum('loan_amount'))
+            outstanding = Loans.objects.filter(borrower_address=address.data['address']).filter(loan_status=3).aggregate(outstanding = Sum('outstanding_amount'))
             
             if open_loans['loan_amount']==None:
-                data_dict = {"status":200, "data":{"loan_amount":0}}
+                data_dict = {"status":200, "data":{"loan_amount":0+outstanding['outstanding_amount']}}
                 return Response(data_dict, status=status.HTTP_200_OK)
-            data_dict = {"status":200, "data":{"loan_amount":open_loans['loan_amount']}}
+            data_dict = {"status":200, "data":{"loan_amount":open_loans['loan_amount'] + outstanding['outstanding_amount']}}
             return Response(data_dict, status=status.HTTP_200_OK)
         return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
 
