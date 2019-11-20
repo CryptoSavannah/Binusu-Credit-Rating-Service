@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import BorrowersLoanList, BorrowerLoanRequestList, LoansDetail, TransactionHistory, GetSpendingKeys, LentMoney, EditLoanStatus, MakeLoanRepayment, LoanRepaymentsList, BorrowedMoney
+from .views import BorrowersLoanList, BorrowerLoanRequestList, LoansDetail, TransactionHistory, GetSpendingKeys, LentMoney, EditLoanStatus, MakeLoanRepayment, LoanRepaymentsList, BorrowedMoney, ScoreMetricDetail
 
 urlpatterns = [
     path('loans/', BorrowersLoanList.as_view(), name="loans-endpoint"),
@@ -12,4 +12,5 @@ urlpatterns = [
     path('loans/update/', EditLoanStatus.as_view(), name="update-loan"),
     path('loans/repayment/', MakeLoanRepayment.as_view(), name="repay-loan"),
     path('loans/repayments_history/', LoanRepaymentsList.as_view(), name="repayments-list"),
+    path('loans/creditcriteria/', ScoreMetricDetail.as_view(), name="metrics-list"),
 ]

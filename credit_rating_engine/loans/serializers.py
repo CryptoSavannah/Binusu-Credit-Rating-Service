@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Loans, LoanPayments
+from .models import Loans, LoanPayments, ScoreMetric
 from accounts.models import User
 
 class LoansRetrieveSerializer(serializers.ModelSerializer):
@@ -59,3 +59,9 @@ class LoanPaymentsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = LoanPayments
         fields = ('loan_id', 'installment_amount', 'paying_address', 'installment_number', 'date_paid', 'repayment_penalty') 
+
+class ScoreMetricSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ScoreMetric
+        fields = ('metric_title', 'metric_percentage_contribution', 'metric_description', 'metric_classification')

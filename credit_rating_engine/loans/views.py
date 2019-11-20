@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Q
-from .serializers import LoansRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, LoanRequestSerializer, SpendKeySerializer, LoanIdSerializer, LoanRepaymentSerializer, LoanRepaymentModelSerializer, IdSerializer, LoanPaymentsListSerializer
-from .models import Loans, LoanPayments
+from .serializers import LoansRetrieveSerializer, LoansFormSerializer, LoansCreateSerializer, LoanRequestSerializer, SpendKeySerializer, LoanIdSerializer, LoanRepaymentSerializer, LoanRepaymentModelSerializer, IdSerializer, LoanPaymentsListSerializer, ScoreMetricSerializer
+from .models import Loans, LoanPayments, ScoreMetric
 from accounts.models import User
 from rest_framework.views import APIView
 from rest_framework import status
@@ -261,6 +261,20 @@ class LoanRepaymentsList(APIView):
             data_dict = {"status":200, "data":serializer.data}
             return Response(data_dict, status=status.HTTP_200_OK)
         return Response(address.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ScoreMetricDetail(APIView):
+    """
+    Retrieve a score metric
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, format=None):
+        metrics = ScoreMetric.objects.all()
+        serializer = ScoreMetricSerializer(metrics, many=True)
+        data_dict = {"data":serializer.data, "status":200}
+        return Response(data_dict, status=status.HTTP_200_OK)
+
 
 
        
